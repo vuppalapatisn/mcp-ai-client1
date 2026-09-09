@@ -93,18 +93,35 @@ jobs:
             -e OPENAI_API_KEY=dummy \
             -e SPRING_AI_MCP_CLIENT_INITIALIZED=false \
             "$IMAGE"
+          up=false
           for _ in $(seq 1 30); do
             if curl -fsS http://localhost:8080/actuator/health >/dev/null 2>&1; then
-              echo "health endpoint is up"
-              docker rm -f smoke >/dev/null
-              exit 0
+              up=true
+              break
             fi
             sleep 2
           done
-          echo "container did not become healthy" >&2
-          docker logs smoke >&2
+          if [ "$up" != true ]; then
+            echo "container did not become healthy" >&2
+            docker logs smoke >&2
+            docker rm -f smoke >/dev/null
+            exit 1
+          fi
+          echo "health endpoint is up"
+
+          # Generating the OpenAPI spec is the only thing that exercises the
+          # swagger-annotations version pin, and it fails at runtime rather than
+          # at compile time, so assert it here.
+          if ! curl -fsS http://localhost:8080/v3/api-docs | grep -q '"openapi"'; then
+            echo "OpenAPI spec did not generate" >&2
+            docker logs smoke >&2
+            docker rm -f smoke >/dev/null
+            exit 1
+          fi
+          echo "OpenAPI spec generated"
+
+          curl -fsS http://localhost:8080/api/ping
           docker rm -f smoke >/dev/null
-          exit 1
 
       # Pull requests stop here: the Dockerfile is proven to build and boot,
       # but only main and version tags publish to GHCR.

@@ -27,3 +27,18 @@ management:
     web:
       exposure:
         include: health,info,metrics
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+
+app:
+  # Endpoints under /api/conversations read and write conversation state without
+  # calling the model. Set to false to leave them out of the application.
+  testing-api:
+    enabled: ${TESTING_API_ENABLED:true}
