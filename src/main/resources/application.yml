@@ -23,7 +23,7 @@ spring:
         streamable-http:
           connections:
             order-server:
-              url: http://localhost:8081
+              url: https://mcp-order-server-1.onrender.com
 
 management:
   endpoints:
