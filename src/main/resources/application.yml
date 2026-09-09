@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: mcp-ai-client
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:replace-me}
+      chat:
+        options:
+          model: ${OPENAI_MODEL:gpt-5-mini}
+    mcp:
+      client:
+        name: enterprise-ai-host
+        version: 1.0.0
+        type: ASYNC
+        initialized: true
+        request-timeout: 10s
+        streamable-http:
+          connections:
+            order-server:
+              url: http://localhost:8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
