@@ -19,7 +19,8 @@ public class OpenApiConfiguration {
                         .title("MCP AI Client API")
                         .version("1.0.0")
                         .description("""
-                            Enterprise order assistant built on Spring AI and the Model Context Protocol.
+                            Enterprise order assistant built on Spring AI (Google Gemini) and the
+                            Model Context Protocol.
 
                             Every endpoint is tenant-scoped: `X-Tenant-Id` and `X-User-Id` are required
                             request headers, and conversations are isolated per tenant/user/conversation
@@ -27,7 +28,7 @@ public class OpenApiConfiguration {
 
                             The endpoints under **conversations** read and write the conversation store
                             directly without calling the language model, so they can be exercised in tests
-                            and local runs with no OpenAI key and no MCP server attached.
+                            and local runs with no Gemini API key and no MCP server attached.
                             """)
                         .license(new License().name("Apache-2.0")))
                 .servers(List.of(

@@ -90,7 +90,7 @@ jobs:
           IMAGE="$(echo '${{ steps.meta.outputs.tags }}' | head -n1)"
           echo "Smoke testing $IMAGE"
           docker run -d --name smoke -p 8080:8080 \
-            -e OPENAI_API_KEY=dummy \
+            -e GEMINI_API_KEY=dummy \
             -e SPRING_AI_MCP_CLIENT_INITIALIZED=false \
             "$IMAGE"
           up=false

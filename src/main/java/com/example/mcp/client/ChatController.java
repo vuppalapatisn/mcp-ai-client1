@@ -29,7 +29,7 @@ public class ChatController {
                 Assembles prompt context from the stored conversation, calls the model with the
                 MCP tool callbacks attached, then records both the user message and the answer.
 
-                Requires a usable `OPENAI_API_KEY` and a reachable MCP server. To exercise the
+                Requires a usable `GEMINI_API_KEY` and a reachable MCP server. To exercise the
                 surrounding logic without either, use the **conversations** endpoints.
                 """)
     public Mono<ChatResponse> chat(

@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Read/write access to the conversation store that bypasses the language model.
  *
- * <p>Useful for exercising context assembly and tenant isolation without an OpenAI
- * key or an attached MCP server. Because these endpoints let a caller write
+ * <p>Useful for exercising context assembly and tenant isolation without a Gemini
+ * API key or an attached MCP server. Because these endpoints let a caller write
  * arbitrary conversation history, they can be turned off with
  * {@code app.testing-api.enabled=false}.
  */

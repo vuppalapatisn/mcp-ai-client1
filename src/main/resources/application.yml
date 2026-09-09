@@ -5,11 +5,14 @@ spring:
   application:
     name: mcp-ai-client
   ai:
-    openai:
-      api-key: ${OPENAI_API_KEY:replace-me}
-      chat:
-        options:
-          model: ${OPENAI_MODEL:gpt-5-mini}
+    google:
+      genai:
+        # Setting an api-key (and no project-id) selects Gemini Developer API
+        # mode. For Vertex AI instead, drop the key and set project-id/location.
+        api-key: ${GEMINI_API_KEY:replace-me}
+        chat:
+          options:
+            model: ${GEMINI_MODEL:gemini-3.6-flash}
     mcp:
       client:
         name: enterprise-ai-host

@@ -22,7 +22,7 @@ public class PingController {
     @GetMapping
     @Operation(summary = "Confirm the service is up.",
             description = "Takes no headers and touches no dependencies, so it answers even when "
-                    + "no MCP server is attached and no OpenAI key is configured.")
+                    + "no MCP server is attached and no Gemini API key is configured.")
     public Pong ping() {
         return new Pong(applicationName, "UP", Instant.now());
     }
