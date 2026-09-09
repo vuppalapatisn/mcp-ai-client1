@@ -1,5 +1,7 @@
 server:
-  port: 8080
+  # Platforms such as Render, Heroku and Cloud Run inject the port to bind as
+  # PORT. Falls back to 8080 for local runs and the Dockerfile's EXPOSE.
+  port: ${PORT:8080}
 
 spring:
   application:
@@ -15,15 +17,35 @@ spring:
             model: ${GEMINI_MODEL:gemini-3.6-flash}
     mcp:
       client:
+        # Set MCP_CLIENT_ENABLED=false to drop the MCP client entirely. The chat
+        # endpoint then answers with no tools instead of failing to start.
+        enabled: ${MCP_CLIENT_ENABLED:true}
         name: enterprise-ai-host
         version: 1.0.0
         type: ASYNC
-        initialized: true
-        request-timeout: 10s
+        # Eager connect: tools are listed during startup, so a misconfigured or
+        # missing order server fails fast and loudly rather than surfacing later
+        # as a failed chat request.
+        #
+        # The tradeoff is that startup ABORTS if the order server is unreachable
+        # -- the context cannot build without it, because the chat model depends
+        # on the tool callback resolver. Deploying this without a reachable
+        # order server will crash-loop the container. Set
+        # MCP_CLIENT_INITIALIZED=false to defer connecting to first use, or
+        # MCP_CLIENT_ENABLED=false to run with no tools at all.
+        initialized: ${MCP_CLIENT_INITIALIZED:true}
+        # 10s is not enough to survive a cold start. A Render free-tier service
+        # spins down when idle and can take ~50s to answer the first request,
+        # and with an eager connect that timeout aborts startup outright.
+        request-timeout: ${MCP_REQUEST_TIMEOUT:60s}
         streamable-http:
           connections:
             order-server:
-              url: https://mcp-order-server-1.onrender.com
+              # Origin only -- the client appends the /mcp endpoint itself, so a
+              # path here (for example /swagger-ui/index.html) breaks the
+              # handshake. Point at a locally run order server with
+              # MCP_ORDER_SERVER_URL=http://localhost:8081.
+              url: ${MCP_ORDER_SERVER_URL:https://mcp-order-server-1.onrender.com}
 
 management:
   endpoints:
