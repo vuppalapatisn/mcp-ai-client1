@@ -25,19 +25,12 @@ public class ContextAssembler {
 
         StringBuilder text = new StringBuilder();
         if (!summary.objective().isBlank()) {
-            text.append("Conversation summary:
-Objective: ").append(summary.objective()).append("
-");
-            text.append("Verified facts: ").append(summary.verifiedFacts()).append("
-");
-            text.append("Pending questions: ").append(summary.pendingQuestions()).append("
-
-");
+            text.append("Conversation summary:\nObjective: ").append(summary.objective()).append("\n");
+            text.append("Verified facts: ").append(summary.verifiedFacts()).append("\n");
+            text.append("Pending questions: ").append(summary.pendingQuestions()).append("\n\n");
         }
-        text.append("Recent conversation:
-");
-        selected.forEach(turn -> text.append(turn.role()).append(": ").append(turn.content()).append("
-"));
+        text.append("Recent conversation:\n");
+        selected.forEach(turn -> text.append(turn.role()).append(": ").append(turn.content()).append("\n"));
         text.append("user: ").append(currentMessage);
         return new AssembledContext(text.toString(), text.length());
     }

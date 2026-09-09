@@ -5,11 +5,14 @@ spring:
   application:
     name: mcp-ai-client
   ai:
-    openai:
-      api-key: ${OPENAI_API_KEY:replace-me}
-      chat:
-        options:
-          model: ${OPENAI_MODEL:gpt-5-mini}
+    google:
+      genai:
+        # Setting an api-key (and no project-id) selects Gemini Developer API
+        # mode. For Vertex AI instead, drop the key and set project-id/location.
+        api-key: ${GEMINI_API_KEY:replace-me}
+        chat:
+          options:
+            model: ${GEMINI_MODEL:gemini-3.6-flash}
     mcp:
       client:
         name: enterprise-ai-host
@@ -27,3 +30,18 @@ management:
     web:
       exposure:
         include: health,info,metrics
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+
+app:
+  # Endpoints under /api/conversations read and write conversation state without
+  # calling the model. Set to false to leave them out of the application.
+  testing-api:
+    enabled: ${TESTING_API_ENABLED:true}

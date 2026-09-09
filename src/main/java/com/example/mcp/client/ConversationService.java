@@ -6,6 +6,7 @@ import java.time.Instant;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Service
 public class ConversationService {
@@ -32,6 +33,8 @@ public class ConversationService {
                         .user(context.text())
                         .call()
                         .content())
+                // call() blocks, so it must not run on the Netty event loop.
+                .subscribeOn(Schedulers.boundedElastic())
                 .map(answer -> {
                     store.append(tenantId, userId, request.conversationId(),
                             new Turn("user", request.message(), Instant.now()));
