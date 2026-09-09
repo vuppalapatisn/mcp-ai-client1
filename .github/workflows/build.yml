@@ -82,16 +82,16 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # The app eagerly connects to the configured MCP server on startup and
-      # aborts if it is unreachable, so initialization is deferred here. This
-      # checks that the image boots and serves actuator, not MCP connectivity.
+      # Passes only a dummy API key and PORT, so this exercises the same
+      # defaults a real deployment gets: no MCP server reachable, no eager MCP
+      # connect. Checks that the image boots and serves actuator on $PORT.
       - name: Smoke test the image
         run: |
           IMAGE="$(echo '${{ steps.meta.outputs.tags }}' | head -n1)"
           echo "Smoke testing $IMAGE"
-          docker run -d --name smoke -p 8080:8080 \
+          docker run -d --name smoke -p 8080:10000 \
             -e GEMINI_API_KEY=dummy \
-            -e SPRING_AI_MCP_CLIENT_INITIALIZED=false \
+            -e PORT=10000 \
             "$IMAGE"
           up=false
           for _ in $(seq 1 30); do

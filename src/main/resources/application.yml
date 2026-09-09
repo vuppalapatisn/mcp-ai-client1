@@ -1,5 +1,7 @@
 server:
-  port: 8080
+  # Platforms such as Render, Heroku and Cloud Run inject the port to bind as
+  # PORT. Falls back to 8080 for local runs and the Dockerfile's EXPOSE.
+  port: ${PORT:8080}
 
 spring:
   application:
@@ -15,15 +17,21 @@ spring:
             model: ${GEMINI_MODEL:gemini-3.6-flash}
     mcp:
       client:
+        # Set MCP_CLIENT_ENABLED=false to drop the MCP client entirely. The chat
+        # endpoint then answers with no tools instead of failing to start.
+        enabled: ${MCP_CLIENT_ENABLED:true}
         name: enterprise-ai-host
         version: 1.0.0
         type: ASYNC
-        initialized: true
+        # Connecting eagerly aborts startup when the MCP server is unreachable,
+        # which kills the container on any platform that deploys this before the
+        # order server exists. Connect on first use instead.
+        initialized: ${MCP_CLIENT_INITIALIZED:false}
         request-timeout: 10s
         streamable-http:
           connections:
             order-server:
-              url: http://localhost:8081
+              url: ${MCP_ORDER_SERVER_URL:http://localhost:8081}
 
 management:
   endpoints:
